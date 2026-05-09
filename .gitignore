@@ -27,3 +27,7 @@ npm-debug.log*
 # Cache
 .cache/
 *.tsbuildinfo
+
+__pycache__/
+*.pyc
+node_modules/
