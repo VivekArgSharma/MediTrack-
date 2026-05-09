@@ -23,7 +23,6 @@
 body { margin: 0; background: var(--bg-canvas); }
 #root { min-height: 100vh; }
 
-/* ─── Shell & topbar ─────────────────────────────────────── */
 .replica-shell { min-height: 100vh; padding: 20px; }
 .replica-surface { max-width: 1240px; margin: 0 auto; }
 
@@ -35,11 +34,7 @@ body { margin: 0; background: var(--bg-canvas); }
   margin-bottom: 14px;
 }
 
-.topbar-patient {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.topbar-patient { display: flex; align-items: center; gap: 10px; }
 .topbar-avatar {
   width: 36px; height: 36px; border-radius: 50%;
   background: var(--navy); color: #fff;
@@ -52,7 +47,6 @@ body { margin: 0; background: var(--bg-canvas); }
 .topbar-brand {
   font-size: 13px; letter-spacing: 0.12em;
   color: var(--text-dim); text-transform: uppercase;
-  background: none; padding: 0; border: none;
 }
 
 .topbar-status { display: flex; align-items: center; gap: 8px; }
@@ -66,53 +60,43 @@ body { margin: 0; background: var(--bg-canvas); }
   70%  { box-shadow: 0 0 0 8px rgba(29,158,117,0); }
   100% { box-shadow: 0 0 0 0 rgba(29,158,117,0); }
 }
-@keyframes sensorRing {
-  0%   { r: 5; opacity: 0.8; }
-  100% { r: 14; opacity: 0; }
-}
 .live-label { font-size: 13px; color: var(--green); font-weight: 500; }
 .live-time  { font-size: 13px; color: var(--text-muted); }
 
-/* ─── Grid ────────────────────────────────────────────────── */
 .replica-grid {
   display: grid;
-  grid-template-columns: 220px 1fr 1fr 220px;
-  grid-template-rows: 70px 200px 160px 170px 80px;
+  grid-template-columns: 220px 1fr 1fr;
+  grid-template-rows: 70px 1fr 170px 80px;
   gap: 6px;
   padding: 20px;
-  box-sizing: border-box;
 }
 
-/* ─── Cards ────────────────────────────────────────────────── */
 .replica-card {
   position: relative;
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  height: 100%;
 }
 
-/* ─── Weight card ──────────────────────────────────────────── */
 .weight-card {
-  grid-column: 1; grid-row: 2;
+  grid-column: 1; grid-row: 1 / 3;
   padding: 16px 18px;
   display: flex; flex-direction: column; justify-content: space-between;
-  overflow: visible;
 }
 .weight-card__label {
   font-size: 11px; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--text-dim);
 }
 .weight-card__delta { font-size: 12px; color: var(--green); margin-top: 2px; }
-.weight-card__bar {
-  display: flex; gap: 4px;
-  margin: 8px 0;
-}
+.weight-card__bar { display: flex; gap: 4px; margin: 8px 0; }
 .bar-seg {
   flex: 1; height: 8px;
   border-radius: 3px;
   background: var(--surface-track);
 }
 .bar-seg.filled { background: var(--navy); }
+.bar-seg.filled-amber { background: var(--amber); }
 .weight-card__value { text-align: right; }
 .weight-card__num {
   font-size: 32px; font-weight: 600; color: var(--text);
@@ -120,12 +104,10 @@ body { margin: 0; background: var(--bg-canvas); }
 }
 .weight-card__unit { font-size: 13px; color: var(--text-muted); margin-left: 3px; }
 
-/* ─── Steps card ───────────────────────────────────────────── */
 .steps-card {
-  grid-column: 2; grid-row: 2 / 4;
+  grid-column: 2; grid-row: 1 / 3;
   padding: 18px 22px;
   display: flex; flex-direction: column;
-  overflow: visible;
 }
 .steps-card__label {
   font-size: 11px; letter-spacing: 0.08em;
@@ -133,41 +115,39 @@ body { margin: 0; background: var(--bg-canvas); }
 }
 .steps-card__arc-wrap {
   flex: 1; display: flex; align-items: center; justify-content: center;
-  overflow: visible;
 }
 .steps-card__arc-wrap svg { overflow: visible; }
 .steps-card__goal {
   font-size: 11px; color: var(--text-dim); text-align: center; margin-bottom: 4px;
 }
 
-/* ─── Heart hero card ─────────────────────────────────────── */
 .hero-heart-card {
-  grid-column: 3; grid-row: 1 / 4;
+  grid-column: 3; grid-row: 1 / 3;
+  background: linear-gradient(180deg, #FFF5F3 0%, #FFFFFF 60%);
   display: flex; flex-direction: column;
 }
 .hero-heart-card__art {
   flex: 1;
   display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
 }
 .hero-heart-card__art .medical-illustration-frame { width: 100%; height: 100%; }
 .hero-heart-card .medical-illustration {
-  width: 72%; max-height: 300px; object-fit: contain; display: block;
+  width: 260px; object-fit: contain; display: block;
 }
 .hero-heart-card__ecg {
+  position: absolute; bottom: 20px; left: 20px; right: 20px;
   display: flex; justify-content: space-between; align-items: center;
-  padding: 0 16px 16px; gap: 12px;
+  gap: 12px;
 }
 .ecg-labels { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
 .ecg-title { font-size: 16px; font-weight: 500; color: var(--text); }
 .ecg-sub { font-size: 13px; color: var(--text-muted); }
 .ecg-wave-wrap {
-  flex: 1; overflow: hidden;
-  height: 40px;
+  flex: 1; overflow: hidden; height: 48px;
   display: flex; align-items: center;
 }
 .ecg-wave {
-  width: 200%; height: 40px;
+  width: 200%; height: 48px;
   animation: scrollECG 3s linear infinite;
 }
 .ecg-wave polyline {
@@ -179,34 +159,17 @@ body { margin: 0; background: var(--bg-canvas); }
   to   { transform: translateX(-50%); }
 }
 
-/* ─── Body map card ───────────────────────────────────────── */
-.body-map-card {
-  grid-column: 4; grid-row: 1 / 4;
-  background: var(--surface-muted);
-}
-.body-map-card__inner {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-.body-map-card__inner svg { height: 85%; }
-
-/* ─── Food/kCal card ───────────────────────────────────────── */
 .food-card {
-  grid-column: 1; grid-row: 3;
+  grid-column: 1; grid-row: 2;
   padding: 16px 18px;
   display: flex; flex-direction: column; justify-content: space-between;
-  overflow: visible;
 }
 .food-card__label {
   font-size: 11px; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--text-dim);
 }
 .food-card__sub { font-size: 12px; color: var(--amber); margin-top: 2px; }
-.food-card__bar {
-  display: flex; gap: 4px;
-  margin: 8px 0;
-}
+.food-card__bar { display: flex; gap: 4px; margin: 8px 0; }
 .food-card__value { text-align: right; }
 .food-card__num {
   font-size: 32px; font-weight: 600; color: var(--text);
@@ -214,25 +177,8 @@ body { margin: 0; background: var(--bg-canvas); }
 }
 .food-card__unit { font-size: 13px; color: var(--text-muted); margin-left: 3px; }
 
-/* ─── Heart strip ─────────────────────────────────────────── */
-.heart-strip-card {
-  grid-column: 3; grid-row: 4;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 22px;
-}
-.heart-strip-card h3 {
-  margin: 0; font-size: 15px; font-weight: 500; color: var(--text);
-}
-.heart-strip-card p { margin: 2px 0 0; font-size: 13px; color: var(--text-muted); }
-.heart-strip-card__wave { width: 112px; height: 44px; flex-shrink: 0; }
-.heart-strip-card__wave path {
-  fill: none; stroke: var(--text-muted);
-  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-}
-
-/* ─── Organ card (Heart + Lungs) ──────────────────────────── */
 .bottom-organs-row {
-  grid-column: 1 / 3; grid-row: 4;
+  grid-column: 1 / 3; grid-row: 3;
   display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
 }
 .organ-card {
@@ -250,9 +196,7 @@ body { margin: 0; background: var(--bg-canvas); }
   overflow: visible;
 }
 .organ-card__footer { margin-top: 6px; }
-.organ-card__name {
-  font-size: 15px; font-weight: 500; color: var(--text);
-}
+.organ-card__name { font-size: 15px; font-weight: 500; color: var(--text); }
 .organ-card__status {
   display: inline-flex; align-items: center; gap: 5px;
   font-size: 13px; color: var(--green); margin-top: 2px;
@@ -266,47 +210,37 @@ body { margin: 0; background: var(--bg-canvas); }
 .organ-card--critical .organ-card__status { color: var(--coral); }
 .organ-card--critical .organ-card__dot  { background: var(--coral); }
 
-/* ─── Bottom stats row ─────────────────────────────────────── */
 .bottom-stats-row {
-  grid-column: 3 / 5; grid-row: 4;
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+  grid-column: 3; grid-row: 3;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
 }
 
-/* ─── Vitals stat card (155px total) ───────────────────────── */
 .vital-card {
-  height: 155px; padding: 12px 14px 10px;
+  padding: 14px 16px 12px;
   display: flex; flex-direction: column;
+  height: 100%;
   overflow: hidden;
 }
 .vital-card__top {
   display: flex; justify-content: space-between; align-items: flex-start;
-  gap: 6px;
+  height: 36px;
 }
 .vital-card__icon { color: var(--coral); flex-shrink: 0; margin-top: 2px; }
-.vital-card h3 {
-  margin: 0; font-size: 12px; font-weight: 500; color: var(--text);
-}
+.vital-card h3 { margin: 0; font-size: 13px; font-weight: 500; color: var(--text); }
 .vital-card__sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 .vital-card__big-num {
-  display: flex; align-items: baseline; gap: 2px;
-  margin: 4px 0;
+  display: flex; align-items: baseline; gap: 4px;
+  height: 38px;
 }
 .vital-card__big-num strong {
-  font-size: 28px; font-weight: 600; color: var(--text);
-  line-height: 1;
+  font-size: 28px; font-weight: 600; color: var(--text); line-height: 1;
 }
-.vital-card__big-num span {
-  font-size: 12px; color: var(--text-muted);
-}
+.vital-card__big-num span { font-size: 13px; color: var(--text-muted); }
 .vital-card__chart {
-  flex: 1; overflow: hidden;
-  max-height: 55px !important;
-  height: 55px !important;
+  flex: 1; overflow: hidden; max-height: 55px;
 }
 .vital-card__chart svg {
-  width: 100%;
-  height: 55px !important;
-  max-height: 55px !important;
+  width: 100%; height: 55px; display: block;
 }
 .vital-card__chart path {
   fill: none;
@@ -315,21 +249,18 @@ body { margin: 0; background: var(--bg-canvas); }
   stroke-linejoin: round;
 }
 
-/* ─── Timeline card ───────────────────────────────────────── */
 .timeline-card {
-  grid-column: 1 / 5; grid-row: 5;
+  grid-column: 1 / 4; grid-row: 4;
   padding: 14px 20px;
   display: grid; grid-template-columns: 160px 1fr;
   align-items: center; gap: 16px;
 }
-.timeline-card__meta {}
 .timeline-card__label {
   font-size: 11px; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--text-dim);
 }
 .timeline-card__dur {
-  font-size: 16px; font-weight: 500; color: var(--text);
-  margin-top: 2px;
+  font-size: 16px; font-weight: 500; color: var(--text); margin-top: 2px;
 }
 .timeline-card__track-shell {
   display: flex; align-items: center; gap: 14px;
@@ -368,7 +299,6 @@ body { margin: 0; background: var(--bg-canvas); }
   white-space: nowrap;
 }
 
-/* ─── Illustrations ────────────────────────────────────────── */
 .medical-illustration-frame {
   position: relative;
   display: flex; align-items: center; justify-content: center;
@@ -386,7 +316,6 @@ body { margin: 0; background: var(--bg-canvas); }
 }
 .medical-illustration { position: relative; z-index: 1; object-fit: contain; }
 
-/* ─── Banner ────────────────────────────────────────────────── */
 .replica-banner {
   margin-bottom: 8px; padding: 10px 14px;
   border-radius: 14px; background: var(--surface);
@@ -394,19 +323,17 @@ body { margin: 0; background: var(--bg-canvas); }
 }
 .replica-banner--error { color: var(--coral); }
 
-/* ─── Responsive ────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .replica-grid {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
   }
-  .weight-card, .steps-card, .hero-heart-card, .body-map-card,
-  .food-card, .heart-strip-card, .bottom-organs-row,
-  .bottom-stats-row, .timeline-card {
+  .weight-card, .steps-card, .hero-heart-card, .food-card,
+  .bottom-organs-row, .bottom-stats-row, .timeline-card {
     grid-column: auto !important; grid-row: auto !important;
   }
   .bottom-organs-row { grid-template-columns: 1fr 1fr; }
-  .bottom-stats-row  { grid-template-columns: 1fr 1fr 1fr; }
+  .bottom-stats-row  { grid-template-columns: 1fr 1fr; }
   .timeline-card     { grid-template-columns: 1fr; }
 }
 
