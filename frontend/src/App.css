@@ -1,0 +1,114 @@
+:root {
+  --accent-navy: #1A3A6B;
+  --accent-coral: #D85A30;
+  --accent-teal: #1D9E75;
+  --accent-amber: #BA7517;
+  --text-primary: #1C1C1C;
+  --text-secondary: #888780;
+  --text-muted: #B4B2A9;
+  --bg-page: #F5F4F0;
+  --bg-card: #FFFFFF;
+  --bg-card-secondary: #F1EFE8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--bg-page);
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr 280px 200px;
+  grid-template-rows: 80px 220px 180px 70px;
+  gap: 6px;
+  height: calc(100vh - 40px); /* account for padding */
+}
+
+/* Card base style */
+.card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Header card specific */
+.header-card {
+  background: var(--bg-page);
+  box-shadow: none;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(29, 158, 117, 0.4);
+  }
+  70% {
+    transform: scale(1.4);
+    box-shadow: 0 0 0 15px rgba(29, 158, 117, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(29, 158, 117, 0);
+  }
+}
+
+@keyframes pulse-slow {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fill-arc {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ecg-scroll {
+  to {
+    transform: translatex(-100%);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered animation delay */
+.card:nth-child(1) { animation-delay: 0ms; }
+.card:nth-child(2) { animation-delay: 80ms; }
+.card:nth-child(3) { animation-delay: 160ms; }
+.card:nth-child(4) { animation-delay: 240ms; }
+.card:nth-child(5) { animation-delay: 320ms; }
+.card:nth-child(6) { animation-delay: 400ms; }
+.card:nth-child(7) { animation-delay: 480ms; }
+.card:nth-child(8) { animation-delay: 560ms; }
+.card:nth-child(9) { animation-delay: 640ms; }
+.card:nth-child(10) { animation-delay: 720ms; }
+.card:nth-child(11) { animation-delay: 800ms; }
+.card:nth-child(12) { animation-delay: 880ms; }
+.card:nth-child(13) { animation-delay: 960ms; }
+.card:nth-child(14) { animation-delay: 1040ms; }
+.card:nth-child(15) { animation-delay: 1120ms; }
