@@ -5,46 +5,62 @@ import { HeartIllustration, LungsIllustration } from '../components/dashboard/Me
 import { OrganStatusCard } from '../components/dashboard/OrganStatusCard';
 import { TimelineCard } from '../components/dashboard/TimelineCard';
 import { VitalsCard } from '../components/dashboard/VitalsCard';
-import { StepsCard } from '../components/dashboard/StepsCard';
-import { WeightCard } from '../components/dashboard/WeightCard';
-import { useHealthData } from '../hooks/useHealthData';
-import { useHealthStore } from '../store';
+import { PatientStatusCard, PatientStatus } from '../components/dashboard/PatientStatusCard';
 
-const CONNECTION_LABELS = {
-  connecting: 'Connecting',
-  live: 'Live',
-  polling: 'Live',
-  offline: 'Reconnecting',
-} as const;
+const DATA_STREAM = [
+  { HR: 78,  SpO2: 98, Temp: 36.8, Steps: 1240, Fall: 0, Motion: 'Walking', Battery: 82 },
+  { HR: 79,  SpO2: 97, Temp: 36.9, Steps: 1252, Fall: 0, Motion: 'Walking', Battery: 81 },
+  { HR: 76,  SpO2: 98, Temp: 36.7, Steps: 1260, Fall: 0, Motion: 'Idle',    Battery: 81 },
+  { HR: 118, SpO2: 94, Temp: 37.2, Steps: 1265, Fall: 1, Motion: 'Impact',  Battery: 80 },
+];
 
-function formatTime(ts: string | undefined) {
-  if (!ts) return '--:--';
-  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+function computeStatus(d: typeof DATA_STREAM[0]): PatientStatus {
+  if (d.Fall === 1 || d.Motion === 'Impact') return 'Fallen';
+  if (d.HR > 110 || d.SpO2 < 95 || d.Temp > 37.5) return 'Emergency';
+  if (d.Motion === 'Walking') return 'Walking';
+  if (d.Motion === 'Idle' && d.HR < 80) return 'Idle';
+  if (d.Motion === 'Idle' && d.HR >= 80) return 'Recovery';
+  return 'Idle';
 }
 
-function seriesFor(
-  history: ReturnType<typeof useHealthStore.getState>['historicalData'],
-  key: 'HR' | 'SpO2' | 'Temp'
-) {
-  return history.slice(-16).map((item) => item.data[key]);
+function spo2Color(v: number) {
+  if (v >= 97) return '#1D9E75';
+  if (v >= 94) return '#BA7517';
+  return '#D85A30';
+}
+
+function tempColor(v: number) {
+  if (v <= 37.2) return '#1D9E75';
+  if (v <= 37.9) return '#BA7517';
+  return '#D85A30';
 }
 
 export function DashboardPage() {
-  const { loading, error } = useHealthData();
-  const currentVitals = useHealthStore((state) => state.currentVitals);
-  const historicalData = useHealthStore((state) => state.historicalData);
-  const status = useHealthStore((state) => state.status);
-  const connectionState = useHealthStore((state) => state.connectionState);
+  const [streamIndex, setStreamIndex] = useState(0);
+  const [current, setCurrent] = useState(DATA_STREAM[0]);
+  const [spo2History, setSpo2History] = useState<number[]>([98, 98, 98, 98]);
+  const [tempHistory, setTempHistory] = useState<number[]>([36.8, 36.8, 36.8, 36.8]);
 
-  const heartRate = currentVitals?.data.HR ?? 0;
-  const spo2 = currentVitals?.data.SpO2 ?? 0;
-  const temp = currentVitals?.data.Temp ?? 0;
-  const motionState = currentVitals?.data.Motion ?? 'Resting';
-  const start = historicalData[0]?.timestamp;
-  const end = currentVitals?.timestamp;
+  const heartRate = current.HR;
+  const spo2 = current.SpO2;
+  const temp = current.Temp;
+  const patientStatus = computeStatus(current);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setStreamIndex(i => (i + 1) % DATA_STREAM.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const row = DATA_STREAM[streamIndex];
+    setCurrent(row);
+    setSpo2History(h => [...h.slice(1), row.SpO2]);
+    setTempHistory(h => [...h.slice(1), row.Temp]);
+  }, [streamIndex]);
 
   const [clock, setClock] = useState('');
-
   useEffect(() => {
     const tick = () => setClock(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     tick();
@@ -65,18 +81,18 @@ export function DashboardPage() {
           </div>
           <div className="topbar-status">
             <span className="live-dot" />
-            <span className="live-label">{CONNECTION_LABELS[connectionState]}</span>
+            <span className="live-label">Live</span>
             {clock && <span className="live-time">{clock}</span>}
           </div>
         </header>
 
-        {error && <div className="replica-banner replica-banner--error">{error}</div>}
-        {loading && <div className="replica-banner">Loading live telemetry…</div>}
-
         <section className="replica-grid">
-          <WeightCard weight={74.2} delta={-0.4} />
-
-          <StepsCard steps={7425} goal={10000} />
+          <PatientStatusCard
+            status={patientStatus}
+            motion={current.Motion}
+            fall={current.Fall}
+            battery={current.Battery}
+          />
 
           <motion.section
             className="replica-card hero-heart-card"
@@ -90,77 +106,57 @@ export function DashboardPage() {
             <div className="hero-heart-card__ecg">
               <div className="ecg-labels">
                 <span className="ecg-title">Heart Rate</span>
-                <span className="ecg-sub">{heartRate || '--'} bpm</span>
+                <div className="ecg-hr-row">
+                  <span className="ecg-hr-num">{heartRate}</span>
+                  <span className="ecg-hr-unit">bpm</span>
+                </div>
               </div>
               <div className="ecg-wave-wrap">
                 <svg viewBox="0 0 320 48" className="ecg-wave" preserveAspectRatio="none" aria-hidden="true">
-                  <polyline
-                    points="0,30 20,30 28,10 34,38 42,34 50,30 70,30 78,10 84,38 92,34 100,30 120,30 128,10 134,38 142,34 150,30 170,30 178,10 184,38 192,34 200,30 220,30 228,10 234,38 242,34 250,30 270,30 278,10 284,38 292,34 300,30 320,30"
-                  />
-                  <polyline
-                    points="0,30 20,30 28,10 34,38 42,34 50,30 70,30 78,10 84,38 92,34 100,30 120,30 128,10 134,38 142,34 150,30 170,30 178,10 184,38 192,34 200,30 220,30 228,10 234,38 242,34 250,30 270,30 278,10 284,38 292,34 300,30 320,30"
-                  />
+                  <polyline points="0,30 20,30 28,10 34,38 42,34 50,30 70,30 78,10 84,38 92,34 100,30 120,30 128,10 134,38 142,34 150,30 170,30 178,10 184,38 192,34 200,30 220,30 228,10 234,38 242,34 250,30 270,30 278,10 284,38 292,34 300,30 320,30" />
+                  <polyline points="0,30 20,30 28,10 34,38 42,34 50,30 70,30 78,10 84,38 92,34 100,30 120,30 128,10 134,38 142,34 150,30 170,30 178,10 184,38 192,34 200,30 220,30 228,10 234,38 242,34 250,30 270,30 278,10 284,38 292,34 300,30 320,30" />
                 </svg>
               </div>
-            </div>
-          </motion.section>
-
-          <motion.section
-            className="replica-card food-card"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.03 }}
-          >
-            <span className="food-card__label">Food</span>
-            <p className="food-card__sub">254 / 1,342 kCal</p>
-            <div className="food-card__bar">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <span key={i} className={`bar-seg${i < 2 ? ' filled-amber' : ''}`} />
-              ))}
-            </div>
-            <div className="food-card__value">
-              <span className="food-card__num">253</span>
-              <span className="food-card__unit">kCal</span>
             </div>
           </motion.section>
 
           <div className="bottom-organs-row">
             <OrganStatusCard
               label="Heart"
-              status={status === 'Critical' ? 'Alert' : 'Normal'}
-              tone={status === 'Critical' ? 'critical' : status === 'Warning' ? 'warning' : 'normal'}
+              status={patientStatus === 'Fallen' || patientStatus === 'Emergency' ? 'Alert' : 'Normal'}
+              tone={patientStatus === 'Fallen' || patientStatus === 'Emergency' ? 'critical' : 'normal'}
               illustration={<HeartIllustration tone="#ef6954" />}
             />
             <OrganStatusCard
               label="Lungs"
-              status={spo2 < 94 ? 'Observe' : 'Normal'}
-              tone={spo2 < 94 ? 'warning' : 'normal'}
+              status="Normal"
+              tone="normal"
               illustration={<LungsIllustration tone="#b5cadf" />}
             />
           </div>
 
           <div className="bottom-stats-row">
             <VitalsCard
-              label="Blood Status"
-              sublabel={`${spo2 || '--'}/100`}
-              value={String(spo2 || '--')}
-              unit="/100"
-              accent="#1A3A6B"
+              label="SpO2"
+              sublabel={`${spo2}%`}
+              value={String(spo2)}
+              unit="%"
+              accent={spo2Color(spo2)}
               icon={<Droplets size={16} />}
-              series={seriesFor(historicalData, 'SpO2')}
+              series={spo2History}
             />
             <VitalsCard
               label="Temperature"
-              sublabel={motionState}
-              value={temp ? temp.toFixed(1) : '--'}
-              unit="C"
-              accent="#303642"
+              sublabel={current.Motion}
+              value={temp.toFixed(1)}
+              unit="°C"
+              accent={tempColor(temp)}
               icon={<Thermometer size={16} />}
-              series={seriesFor(historicalData, 'Temp')}
+              series={tempHistory}
             />
           </div>
 
-          <TimelineCard start={formatTime(start)} end={formatTime(end)} duration="7:30h" />
+          <TimelineCard start="23:30" end="07:00" duration="7:30h" />
         </section>
       </div>
     </main>

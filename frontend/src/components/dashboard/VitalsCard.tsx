@@ -7,6 +7,7 @@ interface VitalsCardProps {
   value: string;
   unit?: string;
   accent: string;
+  valueColor?: string;
   icon?: ReactNode;
   series: number[];
   className?: string;
@@ -26,8 +27,9 @@ function buildSparklinePath(series: number[], width: number, height: number) {
     .join(' ');
 }
 
-export function VitalsCard({ label, sublabel, value, unit, accent, icon, series, className = '' }: VitalsCardProps) {
+export function VitalsCard({ label, sublabel, value, unit, accent, valueColor, icon, series, className = '' }: VitalsCardProps) {
   const sparkline = buildSparklinePath(series, 200, 55);
+  const numColor = valueColor || accent;
 
   return (
     <motion.article
@@ -44,7 +46,7 @@ export function VitalsCard({ label, sublabel, value, unit, accent, icon, series,
         {icon ? <span className="vital-card__icon">{icon}</span> : null}
       </div>
       <div className="vital-card__big-num">
-        <strong>{value}</strong>
+        <strong style={{ color: numColor }}>{value}</strong>
         {unit ? <span>{unit}</span> : null}
       </div>
       <div className="vital-card__chart">

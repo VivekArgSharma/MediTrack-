@@ -9,7 +9,7 @@
   --navy: #1A3A6B;
   --coral: #D85A30;
   --green: #1D9E75;
-  --amber: #C4891A;
+  --amber: #BA7517;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   --radius: 16px;
   font-family: 'Inter', 'DM Sans', 'Segoe UI', sans-serif;
@@ -24,7 +24,7 @@ body { margin: 0; background: var(--bg-canvas); }
 #root { min-height: 100vh; }
 
 .replica-shell { min-height: 100vh; padding: 20px; }
-.replica-surface { max-width: 1240px; margin: 0 auto; }
+.replica-surface { max-width: 1340px; margin: 0 auto; }
 
 .replica-topbar {
   display: grid;
@@ -65,8 +65,8 @@ body { margin: 0; background: var(--bg-canvas); }
 
 .replica-grid {
   display: grid;
-  grid-template-columns: 220px 1fr 1fr;
-  grid-template-rows: 70px 1fr 170px 80px;
+  grid-template-columns: 220px 1fr 1fr 1fr;
+  grid-template-rows: 70px 1fr 1fr 170px 80px;
   gap: 6px;
   padding: 20px;
 }
@@ -79,50 +79,52 @@ body { margin: 0; background: var(--bg-canvas); }
   height: 100%;
 }
 
-.weight-card {
-  grid-column: 1; grid-row: 1 / 3;
-  padding: 16px 18px;
-  display: flex; flex-direction: column; justify-content: space-between;
-}
-.weight-card__label {
-  font-size: 11px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text-dim);
-}
-.weight-card__delta { font-size: 12px; color: var(--green); margin-top: 2px; }
-.weight-card__bar { display: flex; gap: 4px; margin: 8px 0; }
-.bar-seg {
-  flex: 1; height: 8px;
-  border-radius: 3px;
-  background: var(--surface-track);
-}
-.bar-seg.filled { background: var(--navy); }
-.bar-seg.filled-amber { background: var(--amber); }
-.weight-card__value { text-align: right; }
-.weight-card__num {
-  font-size: 32px; font-weight: 600; color: var(--text);
-  line-height: 1; display: inline;
-}
-.weight-card__unit { font-size: 13px; color: var(--text-muted); margin-left: 3px; }
-
-.steps-card {
-  grid-column: 2; grid-row: 1 / 3;
-  padding: 18px 22px;
+.patient-status-card {
+  grid-column: 1; grid-row: 2 / 4;
+  padding: 18px 20px;
   display: flex; flex-direction: column;
+  overflow: visible;
+  border: 2px solid transparent;
 }
-.steps-card__label {
+@keyframes borderFlash {
+  0%   { border-color: transparent; }
+  50%  { border-color: #D85A30; }
+  100% { border-color: transparent; }
+}
+.patient-status-card--alert {
+  animation: borderFlash 0.5s ease-in-out 3;
+}
+.ps-top { display: flex; flex-direction: column; gap: 2px; }
+.ps-label {
   font-size: 11px; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--text-dim);
 }
-.steps-card__arc-wrap {
-  flex: 1; display: flex; align-items: center; justify-content: center;
+.ps-badge { font-size: 32px; font-weight: 600; line-height: 1.1; }
+.ps-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.ps-pills {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  margin-top: auto; padding-top: 12px;
 }
-.steps-card__arc-wrap svg { overflow: visible; }
-.steps-card__goal {
-  font-size: 11px; color: var(--text-dim); text-align: center; margin-bottom: 4px;
+.ps-pill {
+  background: var(--surface-muted); border-radius: 10px;
+  padding: 8px 10px;
+  display: grid; gap: 2px;
+  align-items: center;
 }
+.ps-pill svg { color: var(--text-muted); }
+.ps-pill-label { font-size: 9px; color: var(--text-dim); letter-spacing: 0.06em; }
+.ps-pill-value { font-size: 12px; font-weight: 500; color: var(--text); margin-top: 2px; }
+.ps-alert-strip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; margin-top: 10px;
+  border-top: 1px solid #F5C4B3;
+  background: #FFF0EE; border-radius: 8px;
+  color: var(--coral); font-size: 12px;
+}
+.ps-alert-strip svg { flex-shrink: 0; }
 
 .hero-heart-card {
-  grid-column: 3; grid-row: 1 / 3;
+  grid-column: 2 / 5; grid-row: 2 / 4;
   background: linear-gradient(180deg, #FFF5F3 0%, #FFFFFF 60%);
   display: flex; flex-direction: column;
 }
@@ -132,20 +134,18 @@ body { margin: 0; background: var(--bg-canvas); }
 }
 .hero-heart-card__art .medical-illustration-frame { width: 100%; height: 100%; }
 .hero-heart-card .medical-illustration {
-  width: 260px; object-fit: contain; display: block;
+  width: 280px; object-fit: contain; display: block;
 }
 .hero-heart-card__ecg {
-  position: absolute; bottom: 20px; left: 20px; right: 20px;
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 12px;
+  position: absolute; bottom: 20px; left: 24px; right: 24px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
 }
 .ecg-labels { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
 .ecg-title { font-size: 16px; font-weight: 500; color: var(--text); }
-.ecg-sub { font-size: 13px; color: var(--text-muted); }
-.ecg-wave-wrap {
-  flex: 1; overflow: hidden; height: 48px;
-  display: flex; align-items: center;
-}
+.ecg-hr-row { display: flex; align-items: baseline; gap: 4px; }
+.ecg-hr-num { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1; }
+.ecg-hr-unit { font-size: 14px; color: var(--text-muted); }
+.ecg-wave-wrap { flex: 1; overflow: hidden; height: 48px; display: flex; align-items: center; }
 .ecg-wave {
   width: 200%; height: 48px;
   animation: scrollECG 3s linear infinite;
@@ -159,41 +159,21 @@ body { margin: 0; background: var(--bg-canvas); }
   to   { transform: translateX(-50%); }
 }
 
-.food-card {
-  grid-column: 1; grid-row: 2;
-  padding: 16px 18px;
-  display: flex; flex-direction: column; justify-content: space-between;
-}
-.food-card__label {
-  font-size: 11px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text-dim);
-}
-.food-card__sub { font-size: 12px; color: var(--amber); margin-top: 2px; }
-.food-card__bar { display: flex; gap: 4px; margin: 8px 0; }
-.food-card__value { text-align: right; }
-.food-card__num {
-  font-size: 32px; font-weight: 600; color: var(--text);
-  line-height: 1; display: inline;
-}
-.food-card__unit { font-size: 13px; color: var(--text-muted); margin-left: 3px; }
-
 .bottom-organs-row {
-  grid-column: 1 / 3; grid-row: 3;
+  grid-column: 1 / 3; grid-row: 4;
   display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
 }
 .organ-card {
   padding: 16px 16px 14px;
   display: flex; flex-direction: column;
-  min-height: 160px;
-  overflow: visible;
+  min-height: 160px; overflow: visible;
 }
 .organ-card__art {
   flex: 1; display: flex; align-items: center; justify-content: center;
   min-height: 80px; overflow: visible;
 }
 .organ-card__art .medical-illustration {
-  width: 64px; max-height: 80px; object-fit: contain; display: block;
-  overflow: visible;
+  width: 64px; max-height: 80px; object-fit: contain; display: block; overflow: visible;
 }
 .organ-card__footer { margin-top: 6px; }
 .organ-card__name { font-size: 15px; font-weight: 500; color: var(--text); }
@@ -211,46 +191,33 @@ body { margin: 0; background: var(--bg-canvas); }
 .organ-card--critical .organ-card__dot  { background: var(--coral); }
 
 .bottom-stats-row {
-  grid-column: 3; grid-row: 3;
+  grid-column: 3 / 5; grid-row: 4;
   display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
 }
 
 .vital-card {
   padding: 14px 16px 12px;
   display: flex; flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  height: 100%; overflow: hidden;
 }
 .vital-card__top {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  height: 36px;
+  display: flex; justify-content: space-between; align-items: flex-start; height: 36px;
 }
 .vital-card__icon { color: var(--coral); flex-shrink: 0; margin-top: 2px; }
 .vital-card h3 { margin: 0; font-size: 13px; font-weight: 500; color: var(--text); }
 .vital-card__sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-.vital-card__big-num {
-  display: flex; align-items: baseline; gap: 4px;
-  height: 38px;
-}
-.vital-card__big-num strong {
-  font-size: 28px; font-weight: 600; color: var(--text); line-height: 1;
-}
+.vital-card__big-num { display: flex; align-items: baseline; gap: 4px; height: 38px; }
+.vital-card__big-num strong { font-size: 28px; font-weight: 600; line-height: 1; }
 .vital-card__big-num span { font-size: 13px; color: var(--text-muted); }
-.vital-card__chart {
-  flex: 1; overflow: hidden; max-height: 55px;
-}
-.vital-card__chart svg {
-  width: 100%; height: 55px; display: block;
-}
+.vital-card__chart { flex: 1; overflow: hidden; max-height: 55px; }
+.vital-card__chart svg { width: 100%; height: 55px; display: block; }
 .vital-card__chart path {
-  fill: none;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  fill: none; stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round;
 }
 
 .timeline-card {
-  grid-column: 1 / 4; grid-row: 4;
+  grid-column: 1 / 5; grid-row: 5;
   padding: 14px 20px;
   display: grid; grid-template-columns: 160px 1fr;
   align-items: center; gap: 16px;
@@ -259,77 +226,45 @@ body { margin: 0; background: var(--bg-canvas); }
   font-size: 11px; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--text-dim);
 }
-.timeline-card__dur {
-  font-size: 16px; font-weight: 500; color: var(--text); margin-top: 2px;
-}
-.timeline-card__track-shell {
-  display: flex; align-items: center; gap: 14px;
-}
+.timeline-card__dur { font-size: 16px; font-weight: 500; color: var(--text); margin-top: 2px; }
+.timeline-card__track-shell { display: flex; align-items: center; gap: 14px; }
 .timeline-card__track {
-  position: relative; flex: 1;
-  height: 8px; border-radius: 4px;
-  background: var(--surface-track);
+  position: relative; flex: 1; height: 8px; border-radius: 4px; background: var(--surface-track);
 }
-.timeline-card__fill {
-  position: absolute; left: 10%; right: 20%;
-  top: 0; bottom: 0; border-radius: 4px;
-  background: var(--navy);
-}
+.timeline-card__fill { position: absolute; left: 15%; right: 15%; top: 0; bottom: 0; border-radius: 4px; background: var(--navy); }
 .timeline-thumb {
-  position: absolute; top: 50%;
-  width: 24px; height: 24px; border-radius: 50%;
+  position: absolute; top: 50%; width: 24px; height: 24px; border-radius: 50%;
   background: #fff; border: 1.5px solid var(--navy);
   transform: translate(-50%, -50%);
 }
-.timeline-thumb--start { left: 10%; }
-.timeline-thumb--end   { left: 80%; }
+.timeline-thumb--start { left: 15%; }
+.timeline-thumb--end   { left: 85%; }
 .timeline-thumb__label {
   font-size: 10px; color: var(--text-muted); white-space: nowrap;
-  position: absolute; top: 28px; left: 50%;
-  transform: translateX(-50%);
-}
-.timeline-thumb--end .timeline-thumb__label {
-  left: auto; right: auto; transform: translateX(-50%);
+  position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
 }
 .timeline-card__range-pill {
   display: inline-flex; align-items: center;
   padding: 4px 12px; border-radius: 10px;
   background: var(--navy); color: #fff;
-  font-size: 11px; font-weight: 500;
-  white-space: nowrap;
+  font-size: 11px; font-weight: 500; white-space: nowrap;
 }
 
 .medical-illustration-frame {
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
+  position: relative; display: flex; align-items: center; justify-content: center;
   width: 100%; height: 100%;
 }
 .medical-illustration-frame::after {
-  content: '';
-  position: absolute;
-  inset: 20% 22%;
-  background: var(--tone, var(--coral));
-  opacity: 0.14;
-  filter: blur(30px);
-  border-radius: 999px;
-  pointer-events: none;
+  content: ''; position: absolute; inset: 20% 22%;
+  background: var(--tone, var(--coral)); opacity: 0.14;
+  filter: blur(30px); border-radius: 999px; pointer-events: none;
 }
 .medical-illustration { position: relative; z-index: 1; object-fit: contain; }
 
-.replica-banner {
-  margin-bottom: 8px; padding: 10px 14px;
-  border-radius: 14px; background: var(--surface);
-  box-shadow: var(--shadow); color: var(--text-muted); font-size: 0.84rem;
-}
-.replica-banner--error { color: var(--coral); }
-
 @media (max-width: 1100px) {
-  .replica-grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-  }
-  .weight-card, .steps-card, .hero-heart-card, .food-card,
-  .bottom-organs-row, .bottom-stats-row, .timeline-card {
+  .replica-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .patient-status-card, .hero-heart-card, .bottom-organs-row,
+  .bottom-stats-row, .timeline-card {
     grid-column: auto !important; grid-row: auto !important;
   }
   .bottom-organs-row { grid-template-columns: 1fr 1fr; }
