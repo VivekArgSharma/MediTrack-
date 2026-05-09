@@ -77,7 +77,7 @@ export function DashboardPage() {
             <span className="topbar-name">Arjun Mehta</span>
           </div>
           <div className="topbar-title">
-            <span className="topbar-brand">VitalWatch</span>
+            <span className="topbar-brand">MediTrack+</span>
           </div>
           <div className="topbar-status">
             <span className="live-dot" />

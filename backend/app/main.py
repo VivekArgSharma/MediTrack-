@@ -1,4 +1,6 @@
 from contextlib import asynccontextmanager
+import asyncio
+import threading
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,15 +8,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import router as api_router
 from app.api.websocket import router as websocket_router
 from app.core.config import settings
+from app.services.report_generator import report_generator
 from app.services.runtime import runtime
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    from app.services.migrations import ensure_tables
+    migration_thread = threading.Thread(target=ensure_tables)
+    migration_thread.start()
+    migration_thread.join(timeout=30)
     await runtime.start()
+    await report_generator.start()
     try:
         yield
     finally:
+        await report_generator.stop()
         await runtime.stop()
 
 
@@ -30,6 +39,11 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api")
 app.include_router(websocket_router)
+
+
+@app.get("/api/ping")
+async def ping() -> dict[str, str]:
+    return {"status": "ok"}
 
 
 @app.get("/health")

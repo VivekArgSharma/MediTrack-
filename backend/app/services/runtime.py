@@ -10,6 +10,7 @@ from app.schemas.health import AlertItem, Insight, VitalEnvelope
 from app.services.ai_analysis import generate_insight
 from app.services.alerts import derive_status, evaluate_alerts
 from app.services.parser import parse_raw_vitals
+from app.services.report_generator import report_generator
 
 
 def get_data_source() -> DataSource:
@@ -72,6 +73,7 @@ class MonitorRuntime:
             self.history.append(envelope)
             for alert in alerts:
                 self.alert_log.appendleft(alert)
+            report_generator.record(vitals.model_dump())
             await self._broadcast(envelope)
             await asyncio.sleep(settings.stream_interval_seconds)
 

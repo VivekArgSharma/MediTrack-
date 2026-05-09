@@ -1,9 +1,19 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 
 from app.services.ai_analysis import generate_insight
+from app.services.migrations import ensure_tables
+from app.services.report_generator import report_generator
 from app.services.runtime import runtime
 
 router = APIRouter()
+
+
+@router.get("/reports/status")
+async def get_report_status():
+    return {
+        "buffer_size": report_generator.buffer_size,
+        "ready": report_generator.has_data(),
+    }
 
 
 @router.get("/vitals/history")
@@ -26,3 +36,41 @@ async def get_latest_ai_summary():
 async def analyze_now():
     runtime.latest_insight = generate_insight(runtime.history)
     return runtime.latest_insight
+
+
+@router.post("/reports/generate")
+async def generate_report():
+    report = await report_generator.generate()
+    if report is None:
+        return {"error": "No data accumulated yet. Wait for 20 seconds of vitals data."}
+    return report
+
+
+@router.get("/reports/history")
+async def get_reports_history():
+    try:
+        from app.services.supabase_client import table
+        result = table("reports").select("id,generated_at,text_summary,health_score,risk_level,recommendations,metrics_summary").order("generated_at", desc=True).limit(5).execute()
+        return result.data
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@router.get("/reports/{report_id}")
+async def get_report(report_id: str):
+    try:
+        from app.services.supabase_client import table
+        result = table("reports").select("id,generated_at,text_summary,health_score,risk_level,recommendations,metrics_summary").eq("id", report_id).execute()
+        if not result.data:
+            return {"error": "Report not found"}
+        return result.data[0]
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@router.post("/migrate")
+async def migrate(background: BackgroundTasks):
+    def _do():
+        ensure_tables()
+    background.add_task(_do)
+    return {"status": "Migration started."}

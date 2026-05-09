@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Literal
 from uuid import uuid4
 
 from app.schemas.health import AlertItem, VitalReading
@@ -72,7 +73,7 @@ def evaluate_alerts(vitals: VitalReading) -> list[AlertItem]:
     return alerts
 
 
-def derive_status(alerts: list[AlertItem]) -> str:
+def derive_status(alerts: list[AlertItem]) -> Literal["Stable", "Warning", "Critical"]:
     severities = {alert.severity for alert in alerts}
     if "Critical" in severities:
         return "Critical"
